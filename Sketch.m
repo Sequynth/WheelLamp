@@ -12,8 +12,9 @@ r = 0.609/2; % (roughly a 28" wheel)
 
 % get N equally spaced points
 phi = linspace(0, 2*pi, N+1);
-% we remove the last point, since it is equal to the first, also add a 90° rotation.
-phi = phi(1:end-1) - pi/2;
+% we remove the last point, since it is equal to the first, also add a 90°
+% rotation and half of the angle between two points.
+phi = phi(1:end-1) - pi/2 + phi(2)/2;
 
 % distance between both wheel centers
 off = r * 2/3;
@@ -40,54 +41,54 @@ height = r*sind(ang) + 0.1;
 w1(3, :) = w1(3, :) + height;
 w2(3, :) = w2(3, :) + height;
 
-%%
+% calculate the necessary support height at specified positions
+
+%% Show the wheels
+% use matlab standard colors
+colors = lines;
 
 figure
 hold on
-plot3(w1(1,:),w1(2,:),w1(3,:),'ro')
-plot3(w2(1,:),w2(2,:),w2(3,:),'bo')
-plot3(w2(1,11),w2(2,11),w2(3,11),'x')
+for ii = 1:size(w1, 2)
+    % annotate the points
+    text(w1(1, ii), w1(2, ii), w1(3, ii), num2str(ii))
+    text(w2(1, ii), w2(2, ii), w2(3, ii), num2str(ii))
+end
 axis equal
 
-% for ii = 1:N
-%     plot3([w1(1,ii) w2(1,ii)],[w1(2,ii) w2(2,ii)],[w1(3,ii) w2(3,ii)])
-% end
+% set the connected pairs
+%c = [25 13; 12 12; 13 25; 26 26; 27 11; 10 10; 11 27; 28 28;29 9; 8 8; 9 29;30 30; 31 7; 6 6; 7 31; 32 32; 33 5; 4 4; 5 33; 34 34; 35 3; 2 2; 3 35; 36 36; 1 1];
 
-connections = zeros(N,2);
+c = [25 12; 11 11; 12 25; 26 26;...
+    27 10; 9 9; 10 27; 28 28;...
+    29 8; 7 7; 8 29; 30 30;...
+    31 6; 5 5; 6 31; 32 32;...
+    33 4; 3 3; 4 33; 34 34;...
+    35 2; 1 1; 2 35; 36 36];
+% numbers on wheel one
+c1 = c(:, 1);
+% and two
+c2 = c(:, 2);
 
-connections(:,1) = 1:N;
-connections(2:2:N,2) = (2:2:N)';
-connections(1:2:N,2) = [1; (N-1:-2:3)'];
+% how many lines from one single rope
+n = 4;
 
-
-connections(ceil(N/3)+2:floor(N*2/3),:) = [];
-
-c = [25 13; 12 12; 13 25; 26 26; 27 11; 10 10; 11 27; 28 28;29 9; 8 8; 9 29;30 30; 31 7; 6 6; 7 31; 32 32; 33 5; 4 4; 5 33; 34 34; 35 3; 2 2; 3 35; 36 36; 1 1];
-
-% for ii = 1:size(connections,1)
-%     %plot3([w1(1,connections(ii,1)) w2(1,connections(ii,2))],[w1(2,connections(ii,1)) w2(2,connections(ii,2))],[w1(3,connections(ii,1)) w2(3,connections(ii,2))],'Color',hsv2rgb([ii/size(connections,1)/2 1 1]))
-%     plot3([w1(1,c(ii,1)) w2(1,c(ii,2))],[w1(2,c(ii,1)) w2(2,c(ii,2))],[w1(3,c(ii,1)) w2(3,c(ii,2))],'Color',hsv2rgb([ii/size(c,1)/2 1 1]))
-%     length(ii) = sqrt((w1(1,connections(ii,1))-w2(1,connections(ii,2))).^2 + (w1(2,connections(ii,1))-w2(2,connections(ii,2))).^2 + (w1(3,connections(ii,1))-w2(3,connections(ii,2))).^2);
-% end
-
+idx = 1;
 for ii = 1:4:21
-    %plot3([w1(1,connections(ii,1)) w2(1,connections(ii,2))],[w1(2,connections(ii,1)) w2(2,connections(ii,2))],[w1(3,connections(ii,1)) w2(3,connections(ii,2))],'Color',hsv2rgb([ii/size(connections,1)/2 1 1]))
-    plot3([w1(1,c(ii+1,1)) w2(1,c(ii+1,2))],[w1(2,c(ii+1,1)) w2(2,c(ii+1,2))],[w1(3,c(ii+1,1)) w2(3,c(ii+1,2))],'Color',hsv2rgb([ii/size(c,1)/2 1 1]))
-    plot3([w1(1,c(ii+2,1)) w2(1,c(ii+2,2))],[w1(2,c(ii+2,1)) w2(2,c(ii+2,2))],[w1(3,c(ii+2,1)) w2(3,c(ii+2,2))],'Color',hsv2rgb([ii/size(c,1)/2 1 1]))
-    plot3([w1(1,c(ii+3,1)) w2(1,c(ii+3,2))],[w1(2,c(ii+3,1)) w2(2,c(ii+3,2))],[w1(3,c(ii+3,1)) w2(3,c(ii+3,2))],'Color',hsv2rgb([ii/size(c,1)/2 1 1]))
-    plot3([w1(1,c(ii+4,1)) w2(1,c(ii+4,2))],[w1(2,c(ii+4,1)) w2(2,c(ii+4,2))],[w1(3,c(ii+4,1)) w2(3,c(ii+4,2))],'Color',hsv2rgb([ii/size(c,1)/2 1 1]))
-    length(ii) = sqrt((w1(1,connections(ii,1))-w2(1,connections(ii,2))).^2 + (w1(2,connections(ii,1))-w2(2,connections(ii,2))).^2 + (w1(3,connections(ii,1))-w2(3,connections(ii,2))).^2);
+    xcoords = [w1(1,c1(ii)) w2(1,c2(ii)) w2(1,c2(ii+1)) w1(1,c1(ii+1)) w1(1,c1(ii+2)) w2(1,c2(ii+2)) w2(1,c2(ii+3)) w1(1,c1(ii+3)) w1(1,c1(ii))];
+    ycoords = [w1(2,c1(ii)) w2(2,c2(ii)) w2(2,c2(ii+1)) w1(2,c1(ii+1)) w1(2,c1(ii+2)) w2(2,c2(ii+2)) w2(2,c2(ii+3)) w1(2,c1(ii+3)) w1(2,c1(ii))];
+    zcoords = [w1(3,c1(ii)) w2(3,c2(ii)) w2(3,c2(ii+1)) w1(3,c1(ii+1)) w1(3,c1(ii+2)) w2(3,c2(ii+2)) w2(3,c2(ii+3)) w1(3,c1(ii+3)) w1(3,c1(ii))];
+    plot3(xcoords, ycoords, zcoords, 'Color', colors(idx, :));    
+    lengths(idx) = cumDist(xcoords, ycoords, zcoords);
+    idx = idx+1;
 end
-
-
 
 view([-23 24])
 
-disp(connections)
 
 %length of connections
-fprintf('At least %.2f m of wire are necessary\n',sum(length));
-fprintf('Approximately %.2f m are needed if one continuous wire is used\n',sum(length)+ 2*pi*r);
+fprintf('At least %.2f m of wire are necessary\n',sum(lengths));
+lengths'
 
 %% draw the shape of the wooden plate
 margin = 0.05; % m
